@@ -284,9 +284,8 @@ class Player(object):
         if (self.card_play.value in ["COL","PL4"]):
             self.card_play.color = self.choose_color()
 
-        # Update Q Value
-        if algorithm == "q-learning":
-            agent.update(self.state, self.action)
+        if self.agent.realtime_update:
+            self.agent.update(self.state, self.action)
 
 
     def play_rand(self, deck):
@@ -541,9 +540,13 @@ class Game(object):
                 print (f'Again it is {player_act.name}s turn')
                 self.turn_no = self.turn_no-1
 
+        if self.player_1.agent is not None:
+            self.player_1.identify_state(self.turn.card_open)
+            player_1.agent.update(self.player_1.state, self.player_1.action)
 
-        self.player_1.identify_state(card_open)
-        agent.update(self.player_1.state, self.player_1.action)
+        if self.player_2.agent is not None:
+            self.player_2.identify_state(self.turn.card_open)
+            player_2.agent.update(self.player_2.state, self.player_2.action)
 
         if comment == False: enable_print()
 
