@@ -501,7 +501,7 @@ class Game(object):
 
         self.player_1 = player_1
         self.player_2 = player_2
-        self.turn = Turn(deck = Deck(), self.player_1, self.player_2)
+        self.turn = Turn(Deck(), self.player_1, self.player_2)
 
         self.turn_no = 0
         self.winner = 0

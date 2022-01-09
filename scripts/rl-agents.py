@@ -32,12 +32,12 @@ class QLearningAgent(object):
 
         self.epsilon     = agent_init_info["epsilon"]
         self.step_size   = agent_init_info["step_size"]
-        self.new_model   = agent_init_info["new_model"]
+        self.model       = agent_init_info["model"]
         self.R           = sar.rewards(self.states, self.actions)
 
 
         # (2) Create Q-table that stores action-value estimates, initialized at zero
-        if self.new_model == True:
+        if self.model == None:
             self.q = pd.DataFrame(data    = np.zeros((len(self.states), len(self.actions))),
                                   columns = self.actions,
                                   index   = self.states)
@@ -48,13 +48,13 @@ class QLearningAgent(object):
         # (3) Import already existing Q-values and visits table if possible
         else:
             try:
-                self.q            = pd.read_csv("../assets/files/q-learning-q.csv", sep = ";", index_col = "Unnamed: 0")
+                self.q            = pd.read_csv(self.model + "-q.csv", sep = ";", index_col = "Unnamed: 0")
                 self.q.index      = self.q.index.map(lambda x: eval(x))
                 self.q["IDX"]     = self.q.index
                 self.q            = self.q.set_index("IDX", drop = True)
                 self.q.index.name = None
 
-                self.visit            = pd.read_csv("../assets/files/q-learning-visits.csv", sep = ";", index_col = "Unnamed: 0")
+                self.visit            = pd.read_csv(self.model + "-visits.csv", sep = ";", index_col = "Unnamed: 0")
                 self.visit.index      = self.visit.index.map(lambda x: eval(x))
                 self.visit["IDX"]     = self.visit.index
                 self.visit            = self.visit.set_index("IDX", drop = True)
@@ -141,6 +141,11 @@ class QLearningAgent(object):
         self.prev_state  = state
         self.prev_action = action
 
+    def save_model():
+        if self.model != None:
+            self.q.to_csv(self.model + "-q.csv", sep = ";")
+            self.visit.to_csv(self.model + "-visits.csv", sep = ";")
+
 
 # 3. Monte Carlo
 # -------------------------------------------------------------------------
@@ -165,12 +170,12 @@ class MonteCarloAgent(object):
 
         self.epsilon   = agent_init_info["epsilon"]
         self.step_size = agent_init_info["step_size"]
-        self.new_model = agent_init_info["new_model"]
+        self.model = agent_init_info["model"]
         self.R         = sar.rewards(self.states, self.actions)
 
 
         # (2) Create Q-table that stores action-value estimates, initialized at zero
-        if self.new_model == True:
+        if self.new_model == None:
             self.q = pd.DataFrame(data    = np.zeros((len(self.states), len(self.actions))),
                                   columns = self.actions,
                                   index   = self.states)
@@ -180,13 +185,13 @@ class MonteCarloAgent(object):
         # (3) Import already existing Q-values and visits table if possible
         else:
             try:
-                self.q            = pd.read_csv("../assets/files/monte-carlo-q.csv", sep = ";", index_col = "Unnamed: 0")
+                self.q            = pd.read_csv(self.model + "-q.csv", sep = ";", index_col = "Unnamed: 0")
                 self.q.index      = self.q.index.map(lambda x: eval(x))
                 self.q["IDX"]     = self.q.index
                 self.q            = self.q.set_index("IDX", drop = True)
                 self.q.index.name = None
 
-                self.visit            = pd.read_csv("../assets/files/monte-carlo-visits.csv", sep = ";", index_col = "Unnamed: 0")
+                self.visit            = pd.read_csv(self.model + "-visits.csv", sep = ";", index_col = "Unnamed: 0")
                 self.visit.index      = self.visit.index.map(lambda x: eval(x))
                 self.visit["IDX"]     = self.visit.index
                 self.visit            = self.visit.set_index("IDX", drop = True)
@@ -262,3 +267,8 @@ class MonteCarloAgent(object):
             print (self.q.loc[[s],a])
 
         self.state_seen, self.action_seen, self.q_seen = list(), list(), list()
+
+    def save_model():
+        if self.model != None:
+            self.q.to_csv(self.model + "-q.csv", sep = ";")
+            self.visit.to_csv(self.model + "-visits.csv", sep = ";")
