@@ -2,6 +2,7 @@
 Strategic agent uses domain-expertise to semi-intelligently calculate Q values,
 with hyper-parameters that can be trained intelligently
 """
+
 import pickle
 
 load_from_file(path):
@@ -10,7 +11,7 @@ load_from_file(path):
 
 class StrategicAgent:
 
-    name = "Strategic"
+    name = "strategic"
 
     def __init__(self, parameters):
         self.params = parameters
