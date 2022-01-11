@@ -235,49 +235,12 @@ class Player(object):
             - deck as deck
             - card_open as card
         """
-
-        # Identify state & actions for action selection
-        self.identify_state(card_open)
-        self.identify_action()
-
-        # Agent selects action
-        self.action = self.agent.step(self.state, self.actions)
-
-        # Selected action searches corresponding card
-        # (1) Playing wild card
-        if self.action in ["COL","PL4"]:
-            for card in self.hand:
-                if card.value == self.action:
-                    break
-
-        # (2) Playing normal card with different color
-        elif (self.action in ["RED","GRE","BLU", "YEL"]) and (self.action != card_open.color):
-            for card in self.hand:
-                if (card.color == self.action) and (card.value == card_open.value):
-                    break
-
-        # (3) Playing normal card with same color
-        elif (self.action in ["RED","GRE","BLU", "YEL"]) and (self.action == card_open.color):
-            for card in self.hand:
-                if (card.color == self.action) and (card.value in range(0,10)):
-                    break
-
-        # (4) Playing special card with same color
-        elif (self.action not in ["RED","GRE","BLU", "YEL"]) and (self.action != card_open.value):
-            for card in self.hand:
-                if (card.color == card_open.color) and (card.value == self.action):
-                    break
-
-        # (5) Playing special card with different color
-        else:
-            for card in self.hand:
-                if card.value == self.action:
-                    break
+        card = agent.step(self, card_open)
 
         # Selected card is played
         self.card_play = card
         self.hand.remove(card)
-        self.hand_play.pop()
+        self.hand_play.remove(card)
         deck.discard(card)
         print (f'\n{self.name} plays {card.print_card()}')
 
@@ -562,7 +525,6 @@ def tournament(iterations, agent1, agent2, comment):
     timer_start = time.time()
 
     winners, turns, coverage = list(), list(), list()
-    agent.agent_init(agent_info)
 
     for i in tqdm(range(iterations)):
         #time.sleep(0.01)
