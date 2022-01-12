@@ -2,7 +2,6 @@
 # -------------------------------------------------------------------------
 
 # Custom libraries
-import agents as ag
 import state_action_reward as sar
 
 # Public libraries
@@ -247,8 +246,8 @@ class Player(object):
         if (self.card_play.value in ["COL","PL4"]):
             self.card_play.color = self.choose_color()
 
-        if self.agent.realtime_update:
-            self.agent.update(self.state, self.action)
+        if self.agent.update:
+            self.agent.update(self)
 
 
     def play_rand(self, deck):
@@ -503,13 +502,13 @@ class Game(object):
                 print (f'Again it is {player_act.name}s turn')
                 self.turn_no = self.turn_no-1
 
-        if self.player_1.agent is not None:
+        if self.player_1.agent is not None and self.player_1.agent.update:
             self.player_1.identify_state(self.turn.card_open)
-            player_1.agent.update(self.player_1.state, self.player_1.action)
+            player_1.agent.update(self.player_1)
 
-        if self.player_2.agent is not None:
+        if self.player_2.agent is not None and self.player_2.agent.update:
             self.player_2.identify_state(self.turn.card_open)
-            player_2.agent.update(self.player_2.state, self.player_2.action)
+            player_2.agent.update(self.player_2)
 
         if comment == False: enable_print()
 

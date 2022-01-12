@@ -16,7 +16,7 @@ import random
 class QLearningAgent(object):
 
     name = "q-learning"
-    realtime_update = True
+    update = True
 
     def agent_init(self, agent_init_info):
         """
@@ -137,24 +137,24 @@ class QLearningAgent(object):
                     val_max = val
                     action = i
 
-        return play_card(player, action, open_card)
+        return self.play_card(player, action, open_card)
 
 
-    def update(self, state_dict, action):
+    def update(self, player):
         """
         Updating Q-values according to Belman equation
         Required parameters:
             - state_dict as dict
             - action as str
         """
-        state = [i for i in state_dict.values()]
+        state = [i for i in player.state.values()]
         state = tuple(state)
 
         # (1) Set prev_state unless first turn
         if self.prev_state != 0:
             prev_q = self.q.loc[[self.prev_state], self.prev_action][0]
-            this_q = self.q.loc[[state], action][0]
-            reward = self.R.loc[[state], action][0]
+            this_q = self.q.loc[[state], player.action][0]
+            reward = self.R.loc[[state], player.action][0]
 
             print ("\n")
             print (f'prev_q: {prev_q}')
@@ -162,7 +162,7 @@ class QLearningAgent(object):
             print (f'prev_state: {self.prev_state}')
             print (f'this_state: {state}')
             print (f'prev_action: {self.prev_action}')
-            print (f'this_action: {action}')
+            print (f'this_action: {player.action}')
             print (f'reward: {reward}')
 
             # Calculate new Q-values
@@ -175,7 +175,7 @@ class QLearningAgent(object):
 
         # (2) Save and return action/state
         self.prev_state  = state
-        self.prev_action = action
+        self.prev_action = player.action
 
     def save_model(path=None):
         if location != None:
