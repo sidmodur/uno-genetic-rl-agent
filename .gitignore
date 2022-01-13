@@ -1,2 +1,4 @@
 
 scripts/.ipynb_checkpoints/main-checkpoint.ipynb
+*.pyc
+scripts/tests.py

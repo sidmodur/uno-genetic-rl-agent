@@ -18,7 +18,7 @@ class QLearningAgent(object):
     name = "q-learning"
     update = True
 
-    def agent_init(self, agent_init_info):
+    def __init__(self, agent_init_info):
         """
         Initializes the agent to get parameters and import/create q-tables.
         Required parameters: agent_init_info as dict
@@ -70,6 +70,8 @@ class QLearningAgent(object):
                 self.visit = self.q.copy()
 
     def play_card(self, action, player, card_open):
+        self.update(player.state, action)
+
         # Selected action searches corresponding card
         # (1) Playing wild card
         if player.action in ["COL","PL4"]:
@@ -137,24 +139,24 @@ class QLearningAgent(object):
                     val_max = val
                     action = i
 
-        return self.play_card(player, action, open_card)
+        return self.play_card(action, player, open_card)
 
 
-    def update(self, player):
+    def update(self, state_dict, action):
         """
         Updating Q-values according to Belman equation
         Required parameters:
             - state_dict as dict
             - action as str
         """
-        state = [i for i in player.state.values()]
+        state = [i for i in state_dict.values()]
         state = tuple(state)
 
         # (1) Set prev_state unless first turn
         if self.prev_state != 0:
             prev_q = self.q.loc[[self.prev_state], self.prev_action][0]
-            this_q = self.q.loc[[state], player.action][0]
-            reward = self.R.loc[[state], player.action][0]
+            this_q = self.q.loc[[state], action][0]
+            reward = self.R.loc[[state], action][0]
 
             print ("\n")
             print (f'prev_q: {prev_q}')
@@ -162,7 +164,7 @@ class QLearningAgent(object):
             print (f'prev_state: {self.prev_state}')
             print (f'this_state: {state}')
             print (f'prev_action: {self.prev_action}')
-            print (f'this_action: {player.action}')
+            print (f'this_action: {action}')
             print (f'reward: {reward}')
 
             # Calculate new Q-values
@@ -175,7 +177,7 @@ class QLearningAgent(object):
 
         # (2) Save and return action/state
         self.prev_state  = state
-        self.prev_action = player.action
+        self.prev_action = action
 
     def save_model(path=None):
         if location != None:

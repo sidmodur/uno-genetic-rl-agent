@@ -128,7 +128,10 @@ class Player(object):
     def __init__(self, agent):
         self.name      = "Random"
         self.agent     = agent
-        if agent is not None: self.name = agent.name
+
+        if agent is not None:
+            self.name = agent.name
+
         self.hand      = list()
         self.hand_play = list()
         self.card_play = 0
@@ -136,7 +139,6 @@ class Player(object):
         self.state        = dict()
         self.actions      = dict()
         self.action       = 0
-        agent.prev_state  = 0
 
 
     def evaluate_hand(self, card_open):
@@ -173,6 +175,8 @@ class Player(object):
         norm_cards = {"RED":2,"GRE":2,"BLU":2,"YEL":2}
         spec_cards = {"SKI":1,"REV":1,"PL2":1}
         wild_cards = {"PL4":1,"COL":1}
+
+        self.evaluate_hand(card_open)
 
         self.state = dict()
         self.state["OPEN"] = card_open.color
@@ -234,20 +238,17 @@ class Player(object):
             - deck as deck
             - card_open as card
         """
-        card = agent.step(self, card_open)
+        card = self.agent.step(self, card_open)
 
         # Selected card is played
         self.card_play = card
         self.hand.remove(card)
-        self.hand_play.remove(card)
+        self.hand_play.pop()
         deck.discard(card)
         print (f'\n{self.name} plays {card.print_card()}')
 
         if (self.card_play.value in ["COL","PL4"]):
             self.card_play.color = self.choose_color()
-
-        if self.agent.update:
-            self.agent.update(self)
 
 
     def play_rand(self, deck):
@@ -385,7 +386,7 @@ class Turn(object):
             # (2a) When player draw a card that is finally playable
             if len(player.hand_play) > 0:
 
-                if player == self.player_1:
+                if player.agent != None:
                     player.play_agent(self.deck, self.card_open)
                 else:
                     player.play_rand(self.deck)
@@ -418,7 +419,7 @@ class Turn(object):
 
         while hit == True:
             hit = False
-            for card in player_pas.hand:
+            for card in opponent.hand:
                 if card.value == "PL"+str(penalty):
                     opponent.play_counter(self.deck, self.card_open, card)
                     hit = True
@@ -444,8 +445,8 @@ class Turn(object):
             for i in range (self.count*penalty): player.draw(self.deck, self.card_open)
 
         else:
-            print (f'\n{player_pas.name} has to draw {self.count*penalty} cards')
-            for i in range (self.count*penalty): player_pas.draw(self.deck, self.card_open)
+            print (f'\n{opponent.name} has to draw {self.count*penalty} cards')
+            for i in range (self.count*penalty): opponent.draw(self.deck, self.card_open)
 
 
 # 6. Game
@@ -502,14 +503,6 @@ class Game(object):
                 print (f'Again it is {player_act.name}s turn')
                 self.turn_no = self.turn_no-1
 
-        if self.player_1.agent is not None and self.player_1.agent.update:
-            self.player_1.identify_state(self.turn.card_open)
-            player_1.agent.update(self.player_1)
-
-        if self.player_2.agent is not None and self.player_2.agent.update:
-            self.player_2.identify_state(self.turn.card_open)
-            player_2.agent.update(self.player_2)
-
         if comment == False: enable_print()
 
 
@@ -523,7 +516,7 @@ def tournament(iterations, agent1, agent2, comment):
 
     timer_start = time.time()
 
-    winners, turns, coverage = list(), list(), list()
+    winners, turns = list(), list()
 
     for i in tqdm(range(iterations)):
         #time.sleep(0.01)
@@ -535,14 +528,13 @@ def tournament(iterations, agent1, agent2, comment):
 
         winners.append(game.winner)
         turns.append(game.turn_no)
-        coverage.append((agent.q != 0).values.sum())
 
     # Timer
     timer_end = time.time()
     timer_dur = timer_end - timer_start
     print (f'Execution lasted {round(timer_dur/60,2)} minutes ({round(iterations/timer_dur,2)} games per second)')
 
-    return winners, turns, coverage
+    return winners, turns
 
 
 # 8. Winning Condition

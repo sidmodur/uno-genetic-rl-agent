@@ -27,10 +27,12 @@ class StrategicAgent:
     will be an element of the hyperparameter list
 
     Takes in a player object, the open card, and returns the playable card object
-    that has the highest gravity score. 
+    that has the highest gravity score.
     """
     def step(self, player, open_card):
         pass
+
+    def reset(self): pass
 
     def save_model(self, path=None):
         if path == None:
