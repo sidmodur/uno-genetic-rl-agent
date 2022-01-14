@@ -131,6 +131,7 @@ class Player(object):
 
         if agent is not None:
             self.name = agent.name
+            agent.reset()
 
         self.hand      = list()
         self.hand_play = list()
@@ -247,7 +248,7 @@ class Player(object):
         deck.discard(card)
         print (f'\n{self.name} plays {card.print_card()}')
 
-        if (self.card_play.value in ["COL","PL4"]):
+        if (self.card_play.value in ["COL","PL4"] and self.card_play.color is None):
             self.card_play.color = self.choose_color()
 
 
@@ -518,8 +519,7 @@ def tournament(iterations, agent1, agent2, comment):
 
     winners, turns = list(), list()
 
-    for i in tqdm(range(iterations)):
-        #time.sleep(0.01)
+    for i in range(iterations):
 
         if i%2 == 1:
             game = Game(Player(agent1), Player(agent2), comment)

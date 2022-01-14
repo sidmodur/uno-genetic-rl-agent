@@ -30,6 +30,20 @@ class StrategicAgent:
     that has the highest gravity score.
     """
     def step(self, player, open_card):
+        """
+        Just a general idea for implementation:
+        let x be the number of cards in hand with same color as the card in question
+        let y be the number of cards in hand with same value as the card in question
+        let a be the number of cards seen with same color as the card in question
+        let b be the number of cards seen with same value as the card in question
+
+        for each card in hand, calculate score
+        score = (C_1 * x * a) + (C_2 * y * b)
+
+        Special cards will have different score calculations, but will each have
+        a constant term that is added to the score which is a hyperparameter
+        (think of this as the inherent value of a special card)
+        """
         pass
 
     def reset(self): pass

@@ -33,6 +33,7 @@ class QLearningAgent(object):
         self.epsilon     = agent_init_info["epsilon"]
         self.step_size   = agent_init_info["step_size"]
         self.model       = agent_init_info["model"]
+        self.learn       = agent_init_info["learn"]
         self.R           = sar.rewards(self.states, self.actions)
 
 
@@ -70,7 +71,8 @@ class QLearningAgent(object):
                 self.visit = self.q.copy()
 
     def play_card(self, action, player, card_open):
-        self.update(player.state, action)
+
+        if self.learn: self.update(player.state, action)
 
         # Selected action searches corresponding card
         # (1) Playing wild card
@@ -178,6 +180,9 @@ class QLearningAgent(object):
         # (2) Save and return action/state
         self.prev_state  = state
         self.prev_action = action
+
+    def reset(self):
+        self.prev_state = 0
 
     def save_model(path=None):
         if location != None:
