@@ -248,7 +248,7 @@ class Player(object):
         deck.discard(card)
         print (f'\n{self.name} plays {card.print_card()}')
 
-        if (self.card_play.value in ["COL","PL4"] and self.card_play.color is None):
+        if self.card_play.color == "WILD":
             self.card_play.color = self.choose_color()
 
 
@@ -272,7 +272,7 @@ class Player(object):
                 print (f'\n{self.name} plays {card.print_card()}')
                 break
 
-        if (self.card_play.color == "WILD") or (self.card_play.value == "PL4"):
+        if self.card_play.color == "WILD":
             self.card_play.color = self.choose_color()
 
 
