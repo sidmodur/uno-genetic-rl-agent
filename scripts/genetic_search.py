@@ -4,24 +4,13 @@ used by the strategy agent. Utilizes multi-threading for quicker execution
 """
 
 from multiprocessing import Pool
-import math
 import random
 import strategy_agent as sa
 import environment as uno
 
 class GeneticSearch
 
-    # "pads out" the new generation with the fittest members of the old one,
-    # and ensuring that a minimum number of individuals are carried forth
-    # to the new generation
-    def pad_generation(self, gen, new_gen, start):
-        start = min(start, len(new_gen) - self.min_carry_over)
-        for i in range(0, self.pop_size - start):
-            new_gen[start + i] = gen[i][1]
-
-        return new_gen
-
-    """
+    """"
     Produces an offspring based on the two parents. It does this by randomly
     selecting parameter values from a normal distribution centered at the mean
     of the two parent's parameters. This element of randomness repicates the
@@ -38,10 +27,10 @@ class GeneticSearch
     def reproduce(self, mother, father):
         genome = []
         for i in range(0, len(mother.params)):
-            mu = (mother.params[i] + father.params[i]) / 2
+            mu = float((mother.params[i] + father.params[i]) / 2)
             if mu == 0: sigma = .1
             sigma = abs(mother.params[i] - mu)
-            sigma += (sigma / self.mutation_coeff)
+            sigma /= self.mutation_coeff
             genome[i] = random.normalvariate(mu, sigma)
         return sa.StrategicAgent(parameters=genome)
 
@@ -49,11 +38,21 @@ class GeneticSearch
     Selects the fittest individuals of the generation according to the specification,
     Returns a 2 lists of parents with equal lengths, and the length of the lists
     """
-    def applySelection(self, generation):
-        num_fit = math.floor(self.fitness * self.pop_size)
-        if num_fit % 2 != 0: num_fit -= 1
-        survivors = generation[0:unit_size]
-        return survivors[0::2], survivors[1::2], unit_size/2
+    def regenerate(self, generation):
+        new_gen = [None]*self.pop_size
+
+        for i in range(0, self.carryover):
+            new_gen[i] = generation[i][1]
+
+        num_pairs = int(self.fitness * self.pop_size)
+        mothers = generation[0:num_fit:2] #evens
+        fathers = generation[1:num_fit:2] #odds
+        num_pairs = int(num_pairs / 2)
+
+        for i in range(self.carryover, self.pop_size):
+            new_gen[i] = self.reproduce(mothers[i % num_pairs][1], fathers[i % num_pairs][1])
+
+        return new_gen
 
     """
     Runs the genetic search algorithm by testing a generation for fitness, selecting
@@ -68,20 +67,11 @@ class GeneticSearch
                 winner = generation[0][1]
 
                 if winner != self.winner:
-                    self.winner_change += 1
+                    self.winner_change.append(i)
                     self.winner = winner
 
-                newGen = [None]*self.pop_size
-                mothers, fathers, unit_size = self.applySelection(generation)
+                self.population = self.regenerate(generation)
 
-                start = 0
-                end = unit_size
-                while end < self.pop_size:
-                    newGen[start:end] = p.map(self.reproduce, mothers, fathers)
-                    start = end
-                    end = start + unit_size
-
-                self.population = self.pad_generation(newGen, start)
 
     """
     Populates the search environment with the primordial generation, using adam
@@ -111,8 +101,8 @@ class GeneticSearch
     # pop_size: how many individuals per generations
     # struggle: a function that determines an individual's fitness, should return a
       tuple (#wins, agent)
-    # min_carry_over: specifies the minimum number of the fittest individuals that
-      should be carried over to the next generations. (Actual number may be higher, never lower)
+    # carry_over: specifies the number of the fittest individuals that
+      should be carried over to the next generations.
     # mutation_coeff (0, 1): the value used in the calculation p + p/mutation_coefficient
       in the reproduce() method. (See mathod comment for details)
     # fitness (0, 1): the fraction of the population deemed "fit" to reproduce
@@ -122,17 +112,17 @@ class GeneticSearch
     ----------------------------------------------------------------------------
     # population: a list of individuals that constitute the last generation
     # winner: the most fit individual of the population
-    # winner_changed: the number of times the winner changed while the search ran
+    # winner_changed: a list of rounds where the winner changed
     """
-    def __init__(self, adam, generations, pop_size, struggle, min_carry_over=10,
+    def __init__(self, adam, generations, pop_size, struggle, carryover=10,
     mutation_coeff=.25, fitness=.25):
         self.generations = generations
         self.pop_size = pop_size
         self.struggle = struggle
-        self.carry_over = carry_over
+        self.carryover = carry_over
         self.mutation_coeff = mutation_coeff
         self.fitness = fitness
         self.population = self.genesis(adam)
         self.winner = None
-        self.winner_changed = 0
+        self.winner_changed = []
         self.run_search(adam)
