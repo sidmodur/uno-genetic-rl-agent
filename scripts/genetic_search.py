@@ -16,10 +16,10 @@ class GeneticSearch
     of the two parent's parameters. This element of randomness repicates the
     chaos of random genetic mutation. To augment this process, the standard
     deviation for the normal distribution is given by the formula: for p = |param - mean|:
-    p + p/mutation_coefficient. This means that parents who are more genetically
+    p/{mutation coefficient}. This means that parents who are more genetically
     similar will produce offspring with greater genetic diversity.
 
-    This is somewhat of a more family-friendly process than in the real world,
+    This is somewhat of a more cleaner process than in the real world,
     but definitely less fun.
 
     Returns a strategy agent with new paramters.
@@ -36,7 +36,8 @@ class GeneticSearch
 
     """
     Selects the fittest individuals of the generation according to the specification,
-    Returns a 2 lists of parents with equal lengths, and the length of the lists
+    and mates them with a neighbor in terms of fitness score. Returns a list of
+    individuals that constitute the next generation.
     """
     def regenerate(self, generation):
         new_gen = [None]*self.pop_size
