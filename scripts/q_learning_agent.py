@@ -31,7 +31,8 @@ class QLearningAgent(object):
         self.prev_action = 0
 
         self.epsilon     = agent_init_info["epsilon"]
-        self.step_size   = agent_init_info["step_size"]
+        self.gamma       = agent_init_info["gamma"]
+        self.alpha       = agent_init_info["alpha"]
         self.model       = agent_init_info["model"]
         self.learn       = agent_init_info["learn"]
         self.R           = sar.rewards(self.states, self.actions)
@@ -160,20 +161,16 @@ class QLearningAgent(object):
             this_q = self.q.loc[[state], action][0]
             reward = self.R.loc[[state], action][0]
 
-            print ("\n")
-            print (f'prev_q: {prev_q}')
-            print (f'this_q: {this_q}')
-            print (f'prev_state: {self.prev_state}')
-            print (f'this_state: {state}')
-            print (f'prev_action: {self.prev_action}')
-            print (f'this_action: {action}')
-            print (f'reward: {reward}')
+            if self.alpha == 0:
+                alpha = self.visit.loc[[self.prev_state], self.prev_action][0]
+                alpha = 1.0/alpha if alpha != 0 else .99
+                alpha = alpha if alpha > .05 else .05
+            else:
+                alpha = self.alpha
 
             # Calculate new Q-values
-            if reward == 0:
-                self.q.loc[[self.prev_state], self.prev_action] = prev_q + self.step_size * (reward + this_q - prev_q)
-            else:
-                self.q.loc[[self.prev_state], self.prev_action] = prev_q + self.step_size * (reward - prev_q)
+            bellman = ((1 - alpha) * prev_q) + alpha*(reward + self.gamma*(this_q))
+            self.q.loc[[self.prev_state], self.prev_action] = bellman
 
             self.visit.loc[[self.prev_state], self.prev_action] += 1
 
@@ -185,7 +182,7 @@ class QLearningAgent(object):
         self.prev_state = 0
 
     def save_model(path=None):
-        if location != None:
+        if path != None:
             self.q.to_csv(path + "-q.csv", sep = ";")
             self.visit.to_csv(path + "-visits.csv", sep = ";")
         elif self.model != None:
