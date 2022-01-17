@@ -76,7 +76,7 @@ print(f"time to optimize strategic agent against a random strategy: {timer}")
 
 with open("../assets/ga_new_winners_1.txt", 'w') as file:
     file.writeline("Generations where the fittest individual changed:")
-    for round in search.winner_change: file.writeline(str(round))
+    for round in search.winner_change: file.writelines(str(round))
 
 strat_opt_rand = search.winner
 strat_opt_rand.save_model("../assets/models/strat_opt_rand/model")
@@ -100,10 +100,9 @@ print(f"time to optimize strategic agent against a q-learning agent: {timer}")
 
 with open("../assets/ga_new_winners_2.txt", 'w') as file:
     file.writeline("Generations where the fittest individual changed:")
-    for round in search.winner_change: file.writeline(str(round))
+    for round in search.winner_change: file.writelines(str(round))
 
-strat_opt_q = search.winner
-strat_opt_q.save_model("../assets/models/strat_opt_q/model")
+search.winner.save_model("../assets/models/strat_opt_q/model")
 
 end_time = time.time()
 timer = end_time - start_time
