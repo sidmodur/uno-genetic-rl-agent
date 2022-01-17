@@ -10,15 +10,21 @@ class StrategicAgent:
     name = "strategic"
     update = False
 
-    def __init__(self, parameters=None, model=None):
-        self.model = model
-        if model is not None:
-            with open(model, 'r') as file:
-                self.params = pickle.load(file)
-        elif parameters is not None:
-            self.params = parameters
-        else:
-            raise Exception("Requires a list of parameters or the path to a pickled model")
+    def __init__(self, agent_init_info):
+        self.model = agent_init_info["model"]
+        self.params = agent_init_info["parameters"]
+        self.color_count = dict()
+        self.card_count = dict()
+
+        if self.model is not None:
+            try:
+                with open(self.model) as file:
+                    self.params = pickle.load(file)
+            except OSError:
+                print(f'no model found, will use specified parameters')
+
+        if self.params is None:
+            raise Exception("No model was found and no parameters were specified")
 
     """
     Gives each playable card a "gravity" score which approximates the ability of
@@ -46,7 +52,12 @@ class StrategicAgent:
         """
         pass
 
-    def reset(self): pass
+    """
+    Resets domain knowledge after each game
+    """
+    def reset(self):
+        self.color_count = dict()
+        self.card_count = dict()
 
     def save_model(self, path=None):
         if path == None:

@@ -8,9 +8,9 @@ import random
 import strategy_agent as sa
 import environment as uno
 
-class GeneticSearch
+class GeneticSearch:
 
-    """"
+    """
     Produces an offspring based on the two parents. It does this by randomly
     selecting parameter values from a normal distribution centered at the mean
     of the two parent's parameters. This element of randomness repicates the
@@ -115,7 +115,7 @@ class GeneticSearch
     # winner: the most fit individual of the population
     # winner_changed: a list of rounds where the winner changed
     """
-    def __init__(self, adam, generations, pop_size, struggle, carryover=10,
+    def __init__(self, adam, generations, pop_size, struggle, carryover=50,
     mutation_coeff=.25, fitness=.25):
         self.generations = generations
         self.pop_size = pop_size
