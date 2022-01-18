@@ -26,10 +26,10 @@ class GeneticSearch:
     """
     def reproduce(self, mother, father):
         genome = []
-        for i in range(0, len(mother.params)):
-            mu = float((mother.params[i] + father.params[i]) / 2)
+        for i in range(0, len(mother.h)):
+            mu = float((mother.h[i] + father.h[i]) / 2)
             if mu == 0: sigma = .1
-            sigma = abs(mother.params[i] - mu)
+            sigma = abs(mother.h[i] - mu)
             sigma /= self.mutation_coeff
             genome[i] = random.normalvariate(mu, sigma)
         return sa.StrategicAgent(parameters=genome)

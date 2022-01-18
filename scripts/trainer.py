@@ -1,3 +1,8 @@
+"""
+A script to train our various models, keeps track of the time to train, which
+is printed out.
+"""
+
 import environment as game
 import strategy_agent as sagent
 import q_learning_agent as qagent
@@ -36,6 +41,7 @@ Now lets train the q-learning agent against the unoptimized strategy agent
 """
 
 train_time = time.time()
+print(f"training started at: {train_time}")
 # Agent parameters
 agent_info = {"epsilon": .1,
               "gamma": .2,
@@ -105,5 +111,6 @@ with open("../assets/ga_new_winners_2.txt", 'w') as file:
 search.winner.save_model("../assets/models/strat_opt_q/model")
 
 end_time = time.time()
+print(f"training ended at: {end_time}")
 timer = end_time - start_time
 print(f"The time to train all models: {timer}")
