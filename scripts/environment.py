@@ -262,15 +262,11 @@ class Player(object):
         Required parameters: deck as deck
         """
 
-        random.shuffle(self.hand_play)
-        for card in self.hand:
-            if card == self.hand_play[-1]:
-                self.card_play = card
-                self.hand.remove(card)
-                self.hand_play.pop()
-                deck.discard(card)
-                print (f'\n{self.name} plays {card.print_card()}')
-                break
+        self.card_play = random.choice(self.hand_play)
+        self.hand.remove(self.card_play)
+        self.hand_play.pop()
+        deck.discard(self.card_play)
+        print (f'\n{self.name} plays {self.card_play.print_card()}')
 
         if self.card_play.color == "WILD":
             self.card_play.color = self.choose_color()
