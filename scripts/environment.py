@@ -239,20 +239,24 @@ class Player(object):
             - deck as deck
             - card_open as card
         """
-        card = self.agent.step(self, card_open)
+
+        self.card_play = self.agent.step(self, card_open)
 
         # Selected card is played
-        self.card_play = card
-        self.hand.remove(card)
+        try:
+            self.hand.remove(self.card_play)
+        except ValueError:
+            raise Exception(self.card_play.print_card())
+
         self.hand_play.pop()
-        deck.discard(card)
-        print (f'\n{self.name} plays {card.print_card()}')
+        deck.discard(self.card_play)
+        print (f'\n{self.name} plays {self.card_play.print_card()}')
 
         if self.card_play.color == "WILD":
             self.card_play.color = self.choose_color()
 
 
-    def play_rand(self, deck):
+    def play_rand(self, deck, card_open):
         """
         Reflecting a players' random move, that consists of:
             - Shuffling players' hand cards
@@ -370,7 +374,7 @@ class Turn(object):
             if player.agent != None:
                 player.play_agent(self.deck, self.card_open)
             else:
-                player.play_rand(self.deck)
+                player.play_rand(self.deck, self.card_open)
 
             self.card_open = player.card_play
             player.evaluate_hand(self.card_open)
@@ -386,7 +390,7 @@ class Turn(object):
                 if player.agent != None:
                     player.play_agent(self.deck, self.card_open)
                 else:
-                    player.play_rand(self.deck)
+                    player.play_rand(self.deck, self.card_open)
 
                 self.card_open = player.card_play
                 player.evaluate_hand(self.card_open)
@@ -527,10 +531,9 @@ def tournament(iterations, agent1, agent2, comment):
 
     # Timer
     timer_end = time.time()
-    timer_dur = timer_end - timer_start
-    print (f'Execution lasted {round(timer_dur/60,2)} minutes ({round(iterations/timer_dur,2)} games per second)')
+    timer = timer_end - timer_start
 
-    return winners, turns
+    return winners, turns, timer
 
 
 # 8. Winning Condition

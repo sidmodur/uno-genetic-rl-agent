@@ -7,6 +7,7 @@ import environment as game
 import strategy_agent as sagent
 import q_learning_agent as qagent
 import genetic_search as genetic
+import time
 
 start_time = time.time()
 

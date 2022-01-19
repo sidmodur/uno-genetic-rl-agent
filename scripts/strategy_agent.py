@@ -123,15 +123,16 @@ class StrategicAgent:
             self.value_count.update({open_card.value: 1})
 
         self.card_count += 1
+        
 
-        max_grav = 0
-        best_card = None
-        for card in player.hand_play:
+        max_grav = self.getGravity(player.hand_play[0], player)
+        best_card = player.hand_play[0]
+        for i in range(1, len(player.hand_play)):
             # calculate score
-            gravity = self.getGravity(card, player)
+            gravity = self.getGravity(player.hand_play[i], player)
             if max_grav < gravity:
                 max_grav = gravity
-                best_card = card
+                best_card = player.hand_play[i]
 
         return best_card
 

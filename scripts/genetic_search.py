@@ -3,7 +3,6 @@ A genetic algorithm that solves the search problem of optimizing the hyperparame
 used by the strategy agent. Utilizes multi-threading for quicker execution
 """
 
-from multiprocessing import Pool
 import random
 import strategy_agent as sa
 import environment as uno
@@ -25,14 +24,14 @@ class GeneticSearch:
     Returns a strategy agent with new paramters.
     """
     def reproduce(self, mother, father):
-        genome = []
+        genome = [0.0]*len(mother.h)
         for i in range(0, len(mother.h)):
             mu = float((mother.h[i] + father.h[i]) / 2)
             if mu == 0: sigma = .1
             sigma = abs(mother.h[i] - mu)
             sigma /= self.mutation_coeff
             genome[i] = random.normalvariate(mu, sigma)
-        return sa.StrategicAgent(parameters=genome)
+        return sa.StrategicAgent({"model": None, "parameters": genome})
 
     """
     Selects the fittest individuals of the generation according to the specification,
@@ -46,8 +45,8 @@ class GeneticSearch:
             new_gen[i] = generation[i][1]
 
         num_pairs = int(self.fitness * self.pop_size)
-        mothers = generation[0:num_fit:2] #evens
-        fathers = generation[1:num_fit:2] #odds
+        mothers = generation[0:num_pairs:2] #evens
+        fathers = generation[1:num_pairs:2] #odds
         num_pairs = int(num_pairs / 2)
 
         for i in range(self.carryover, self.pop_size):
@@ -60,18 +59,17 @@ class GeneticSearch:
     the most fit, reproducing the generation with the most fit individuals' offspring,
     and repeating the cycle for however many generations specified.
     """
-    def run_search(self)
-        for i in range(1, self.generations):
-            with Pool.pool() as p:
-                generation = p.map(self.struggle, self.population)
-                generation.sort(reverse=True)
-                winner = generation[0][1]
+    def run_search(self):
+        for i in range(0, self.generations):
+            generation = sorted(map(self.struggle, self.population), key=lambda x: x[0], reverse=True)
+            winner = generation[0][1]
+            print(generation[0][1])
 
-                if winner != self.winner:
-                    self.winner_change.append(i)
-                    self.winner = winner
+            if winner != self.winner:
+                self.winner_changed.append(i)
+                self.winner = winner
 
-                self.population = self.regenerate(generation)
+            self.population = self.regenerate(generation)
 
 
     """
@@ -84,11 +82,11 @@ class GeneticSearch:
         population[0] = adam
 
         for i in range(1, self.pop_size):
-            genome = []
-            for x in range(0, len(adam.params)):
-                genome[x] = random.gauss(adam[x], self.mutation_coeff * adam[x])
+            genome = [0.0]*len(adam.h)
+            for x in range(0, len(adam.h)):
+                genome[x] = random.gauss(adam.h[x], self.mutation_coeff * adam.h[x])
 
-            population[i] = sa.StrategicAgent(parameters=genome)
+            population[i] = sa.StrategicAgent({"model": None, "parameters": genome})
 
         return population
 
@@ -120,10 +118,10 @@ class GeneticSearch:
         self.generations = generations
         self.pop_size = pop_size
         self.struggle = struggle
-        self.carryover = carry_over
+        self.carryover = carryover
         self.mutation_coeff = mutation_coeff
         self.fitness = fitness
         self.population = self.genesis(adam)
         self.winner = None
         self.winner_changed = []
-        self.run_search(adam)
+        self.run_search()
