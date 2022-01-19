@@ -52,7 +52,7 @@ agent_info = {"epsilon": .1,
               }
 
 q_v_strat = qagent.QLearningAgent(agent_info)
-unopt_strat = sagent.StrategicAgent({"model": "../assets/strat_unopt/model", "parameters": "models"})
+unopt_strat = sagent.StrategicAgent({"model": "../assets/models/strat_unopt/model", "parameters": "models"})
 
 # Run simulations
 run = uno.tournament(iterations = 10000,
@@ -72,7 +72,8 @@ Now lets optimize the strategic agent against the random agent
 
 def test_1(agent):
     run = uno.tournament(50, agent, None, False)
-    return (run[0].count("strategic"), agent)
+    wins = run[0].count("strategic")
+    return (wins, agent)
 
 train_time = time.time()
 search = genetic.GeneticSearch(unopt_strat, 500, 500, test_1)
@@ -96,7 +97,8 @@ q_v_strat.learn = False
 
 def test_2(agent):
     run = uno.tournament(50, agent, q_v_strat, False)
-    return (run[0].count("strategic"), agent)
+    wins = run[0].count("strategic")
+    return (wins, agent)
 
 train_time = time.time()
 search = genetic.GeneticSearch(unopt_strat, 100, 500, test_2)

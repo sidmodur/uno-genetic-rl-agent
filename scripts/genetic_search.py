@@ -84,7 +84,7 @@ class GeneticSearch:
         for i in range(1, self.pop_size):
             genome = [0.0]*len(adam.h)
             for x in range(0, len(adam.h)):
-                genome[x] = random.gauss(adam.h[x], self.mutation_coeff * adam.h[x])
+                genome[x] = random.gauss(adam.h[x], adam.h[x])
 
             population[i] = sa.StrategicAgent({"model": None, "parameters": genome})
 

@@ -5,7 +5,7 @@ import strategy_agent as sagent
 # Agent parameters
 agent_info = {
 "model": None,
-"parameters": [1,1,1,1,1,1,1,1,1,1,1,1]
+"parameters": [10,5,100,1,100,1,100,1,100,1,100,1]
 }
 
 
