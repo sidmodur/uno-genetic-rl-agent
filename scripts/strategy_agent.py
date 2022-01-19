@@ -34,7 +34,7 @@ class StrategicAgent:
 
         if self.model is not None:
             try:
-                with open(self.model) as file:
+                with open(self.model, "rb") as file:
                     self.h = pickle.load(file)
             except OSError:
                 print(f'no model found, will use specified parameters')
@@ -152,5 +152,5 @@ class StrategicAgent:
         if path == None:
             path = self.model
         if path != None:
-            with open(path, 'w') as file:
-                pickle.dump(self.params, file)
+            with open(path, 'wb') as file:
+                pickle.dump(self.h, file)

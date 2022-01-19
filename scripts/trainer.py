@@ -20,7 +20,7 @@ train_time = time.time()
 agent_info = {"epsilon"  : .1,
               "gamma": .1,
               "alpha": 0, #alpha decay
-              "model": "../assets/q_v_rand/model",
+              "model": "../assets/models/q_v_rand/model",
               "learn": True
               }
 
@@ -47,12 +47,12 @@ print(f"training started at: {train_time}")
 agent_info = {"epsilon": .1,
               "gamma": .1,
               "alpha": 0, #alpha decay
-              "model": "../assets/q_v_strat/model",
+              "model": "../assets/models/q_v_strat/model",
               "learn": True
               }
 
 q_v_strat = qagent.QLearningAgent(agent_info)
-unopt_strat = sagent.StrategicAgent({"model": "../assets/strat_unopt/model", "parameters": "model"})
+unopt_strat = sagent.StrategicAgent({"model": "../assets/strat_unopt/model", "parameters": "models"})
 
 # Run simulations
 run = uno.tournament(iterations = 10000,
@@ -81,7 +81,7 @@ end_time = time.time()
 timer = end_time - train_time
 print(f"time to optimize strategic agent against a random strategy: {timer}")
 
-with open("../assets/ga_new_winners_1.txt", 'w') as file:
+with open("assets/ga_new_winners_1.txt", 'w') as file:
     file.writeline("Generations where the fittest individual changed:")
     for round in search.winner_change: file.writelines(str(round))
 
@@ -105,7 +105,7 @@ end_time = time.time()
 timer = end_time - train_time
 print(f"time to optimize strategic agent against a q-learning agent: {timer}")
 
-with open("../assets/ga_new_winners_2.txt", 'w') as file:
+with open("assets/ga_new_winners_2.txt", 'w') as file:
     file.writeline("Generations where the fittest individual changed:")
     for round in search.winner_change: file.writelines(str(round))
 

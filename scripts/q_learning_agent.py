@@ -181,7 +181,7 @@ class QLearningAgent(object):
     def reset(self):
         self.prev_state = 0
 
-    def save_model(path=None):
+    def save_model(self, path=None):
         if path != None:
             self.q.to_csv(path + "-q.csv", sep = ";")
             self.visit.to_csv(path + "-visits.csv", sep = ";")

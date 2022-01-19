@@ -18,9 +18,4 @@ run = uno.tournament(iterations = 100,
 
 print(run[0].count("strategic"))
 
-run = uno.tournament(iterations = 100,
-                     agent1 = agent,
-                     agent2 = None, #random strategy agent
-                     comment = False)
-
-print(run[0].count("strategic"))
+agent.save_model()
