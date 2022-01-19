@@ -3,7 +3,7 @@ A script to train our various models, keeps track of the time to train, which
 is printed out.
 """
 
-import environment as game
+import environment as uno
 import strategy_agent as sagent
 import q_learning_agent as qagent
 import genetic_search as genetic
@@ -18,7 +18,7 @@ first train a q-learning agent against a random strategy agent
 train_time = time.time()
 # Agent parameters
 agent_info = {"epsilon"  : .1,
-              "gamma": .2,
+              "gamma": .1,
               "alpha": 0, #alpha decay
               "model": "../assets/q_v_rand/model",
               "learn": True
@@ -45,7 +45,7 @@ train_time = time.time()
 print(f"training started at: {train_time}")
 # Agent parameters
 agent_info = {"epsilon": .1,
-              "gamma": .2,
+              "gamma": .1,
               "alpha": 0, #alpha decay
               "model": "../assets/q_v_strat/model",
               "learn": True
