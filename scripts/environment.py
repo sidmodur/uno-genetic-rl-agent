@@ -8,7 +8,6 @@ import state_action_reward as sar
 import numpy as np
 import random
 import time
-from tqdm.notebook import tqdm
 import sys, os
 
 

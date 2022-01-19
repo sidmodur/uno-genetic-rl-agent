@@ -71,11 +71,11 @@ Now lets optimize the strategic agent against the random agent
 """
 
 def test_1(agent):
-    run = uno.tournament(100, agent, None, False)
+    run = uno.tournament(50, agent, None, False)
     return (run[0].count("strategic"), agent)
 
 train_time = time.time()
-search = genetic.GeneticSearch(unopt_strat, 1000, 1000, test_1)
+search = genetic.GeneticSearch(unopt_strat, 500, 500, test_1)
 
 end_time = time.time()
 timer = end_time - train_time
@@ -95,11 +95,11 @@ Now lets optimize the strategic agent against the q-learning agent
 q_v_strat.learn = False
 
 def test_2(agent):
-    run = uno.tournament(100, agent, q_v_strat, False)
+    run = uno.tournament(50, agent, q_v_strat, False)
     return (run[0].count("strategic"), agent)
 
 train_time = time.time()
-search = genetic.GeneticSearch(unopt_strat, 1000, 1000, test_2)
+search = genetic.GeneticSearch(unopt_strat, 100, 500, test_2)
 
 end_time = time.time()
 timer = end_time - train_time

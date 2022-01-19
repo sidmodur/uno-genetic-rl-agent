@@ -23,12 +23,13 @@ strat_agent_info = {
     "parameters": [1,1,1,1,1,1,1,1,1,1,1,1]
 }
 
+q_agent.learn = False
+
 def struggle(agent):
     run = uno.tournament(50, agent, q_agent, False)
     wins = run[0].count(agent.name)
     return (wins, agent)
 
-q_agent.learn = False
 train_time = time.time()
 search = genetic.GeneticSearch(sa.StrategicAgent(strat_agent_info), 1, 500, struggle)
 end_time = time.time()
