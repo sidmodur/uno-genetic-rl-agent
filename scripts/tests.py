@@ -3,19 +3,21 @@ import q_learning_agent as rlagent
 import strategy_agent as sagent
 
 # Agent parameters
-agent_info = {
-"model": None,
-"parameters": [10,5,100,1,100,1,100,1,100,1,100,1]
-}
+agent_info = {"epsilon"  : .1,
+              "gamma": .2,
+              "alpha": 0, #decay
+              "model": "../assets/models/q_v_rand/model",
+              "learn": False
+              }
 
+# Load Q-Learning agent
+q_v_rand = rlagent.QLearningAgent(agent_info)
 
 # Run simulations
-agent = sagent.StrategicAgent(agent_info)
 run = uno.tournament(iterations = 100,
-                     agent1 = agent,
+                     agent1 = q_v_rand,
                      agent2 = None, #random strategy agent
                      comment = False)
 
-print(run[0].count("strategic"))
 
-agent.save_model()
+print(run[0].count("q-learning"))

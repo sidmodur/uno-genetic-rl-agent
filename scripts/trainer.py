@@ -27,7 +27,7 @@ agent_info = {"epsilon"  : .1,
 q_v_rand = qagent.QLearningAgent(agent_info)
 
 # Run simulations
-run = uno.tournament(iterations = 10000,
+run = uno.tournament(iterations = 100000,
                      agent1 = q_v_rand,
                      agent2 = None, #random strategy agent
                      comment = False)
@@ -36,6 +36,8 @@ end_time = time.time()
 timer = end_time - train_time
 print(f"time to train q_v_rand: {timer}")
 q_v_rand.save_model()
+
+
 
 """
 Now lets train the q-learning agent against the unoptimized strategy agent
@@ -55,7 +57,7 @@ q_v_strat = qagent.QLearningAgent(agent_info)
 unopt_strat = sagent.StrategicAgent({"model": "../assets/models/strat_unopt/model", "parameters": "models"})
 
 # Run simulations
-run = uno.tournament(iterations = 10000,
+run = uno.tournament(iterations = 100000,
                      agent1 = q_v_strat,
                      agent2 = unopt_strat,
                      comment = False)
@@ -82,9 +84,9 @@ end_time = time.time()
 timer = end_time - train_time
 print(f"time to optimize strategic agent against a random strategy: {timer}")
 
-with open("assets/ga_new_winners_1.txt", 'w') as file:
-    file.writeline("Generations where the fittest individual changed:")
-    for round in search.winner_change: file.writelines(str(round))
+with open("../assets/models/ga_new_winners_1.txt", 'w') as file:
+    file.writelines("Generations where the fittest individual changed:")
+    for round in search.winner_changed: file.writelines(str(round))
 
 strat_opt_rand = search.winner
 strat_opt_rand.save_model("../assets/models/strat_opt_rand/model")
@@ -92,6 +94,8 @@ strat_opt_rand.save_model("../assets/models/strat_opt_rand/model")
 """
 Now lets optimize the strategic agent against the q-learning agent
 """
+
+strat_opt_rand = sagent.StrategicAgent({"model" : "../assets/models/strat_opt_rand/model", "parameters" : "model"})
 
 q_v_strat.learn = False
 
@@ -101,15 +105,15 @@ def test_2(agent):
     return (wins, agent)
 
 train_time = time.time()
-search = genetic.GeneticSearch(unopt_strat, 100, 500, test_2)
+search = genetic.GeneticSearch(strat_opt_rand, 500, 500, test_2)
 
 end_time = time.time()
 timer = end_time - train_time
 print(f"time to optimize strategic agent against a q-learning agent: {timer}")
 
-with open("assets/ga_new_winners_2.txt", 'w') as file:
-    file.writeline("Generations where the fittest individual changed:")
-    for round in search.winner_change: file.writelines(str(round))
+with open("../assets/models/ga_new_winners_2.txt", 'w') as file:
+    file.writelines("Generations where the fittest individual changed:")
+    for round in search.winner_changed: file.writelines(str(round) + "\n")
 
 search.winner.save_model("../assets/models/strat_opt_q/model")
 

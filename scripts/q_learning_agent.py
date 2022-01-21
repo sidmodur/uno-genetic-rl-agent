@@ -49,20 +49,21 @@ class QLearningAgent(object):
 
         # (3) Import already existing Q-values and visits table if possible
         else:
-            try:
-                self.q            = pd.read_csv(self.model + "-q.csv", sep = ";", index_col = "Unnamed: 0")
-                self.q.index      = self.q.index.map(lambda x: eval(x))
-                self.q["IDX"]     = self.q.index
-                self.q            = self.q.set_index("IDX", drop = True)
-                self.q.index.name = None
+            #try:
+            self.q            = pd.read_csv(self.model + "-q.csv", sep = ";", index_col = "Unnamed: 0")
+            self.q.index      = self.q.index.map(lambda x: eval(x))
+            self.q["IDX"]     = pd.MultiIndex.to_numpy(self.q.index)
+            self.q            = self.q.set_index("IDX", drop = True)
+            self.q.index.name = None
 
-                self.visit            = pd.read_csv(self.model + "-visits.csv", sep = ";", index_col = "Unnamed: 0")
-                self.visit.index      = self.visit.index.map(lambda x: eval(x))
-                self.visit["IDX"]     = self.visit.index
-                self.visit            = self.visit.set_index("IDX", drop = True)
-                self.visit.index.name = None
+            self.visit            = pd.read_csv(self.model + "-visits.csv", sep = ";", index_col = "Unnamed: 0")
+            self.visit.index      = self.visit.index.map(lambda x: eval(x))
+            self.visit["IDX"]     = pd.MultiIndex.to_numpy(self.visit.index)
+            self.visit            = self.visit.set_index("IDX", drop = True)
+            self.visit.index.name = None
 
             # (3a) Create empty q-tables if file is not found
+            """
             except:
                 print ("Existing model could not be found. New model is being created.")
                 self.q = pd.DataFrame(data    = np.zeros((len(self.states), len(self.actions))),
@@ -70,6 +71,7 @@ class QLearningAgent(object):
                                       index   = self.states)
 
                 self.visit = self.q.copy()
+            """
 
     def play_card(self, action, player, card_open):
 

@@ -63,7 +63,6 @@ class GeneticSearch:
         for i in range(0, self.generations):
             generation = sorted(map(self.struggle, self.population), key=lambda x: x[0], reverse=True)
             winner = generation[0][1]
-            print(generation[0][1])
 
             if winner != self.winner:
                 self.winner_changed.append(i)
